@@ -1,4 +1,3 @@
-import com.sun.source.tree.ReturnTree;
 import java.lang.Math;
 
 import java.util.Scanner;
@@ -90,6 +89,11 @@ public class Checker {
             return  Math.abs(newLocation[1] - oldLocation[1]) == 1;
     }
 
+    public static boolean isPlayerMovingOneColumn(byte[] oldLocation, byte[] newLocation) {
+        //Player 1 must move down, therefore the new_Y = old_Y+1
+        return  Math.abs(newLocation[0] - oldLocation[0]) == 1;
+    }
+
     //Check if the location is valid. While checking the old location, the location is valid if the current user has a stone in that location.
     public static boolean isOldLocationValid(char playerTurn, char[][] playGround,byte[] oldLocation) {
         //Check if the entered location is in the field.
@@ -117,8 +121,14 @@ public class Checker {
                 if (isPlayerMovingInTheRightDirection(oldLocation, newLocation, playerTurn)) {
                     //Check if the player is moving only one row.
                     if(isPlayerMovingOneRow(oldLocation, newLocation)){
-                        System.out.println("In the field, empty, right direction, one row. Now we have to check if it is diagonal.");
-                        return true;
+                        //Now that we know it is only moving one cell forward, we only need to check if it is moving
+                        // also one cell to the left or right. We have already checked if the targer location is empty.
+                        if(isPlayerMovingOneColumn(oldLocation, newLocation)){
+                            return true;
+                        } else {
+                            System.out.println("The move is not valid. You have to move diagonal.");
+                            return false;
+                        }
                     } else {
                         System.out.println("You are moving more than one row.");
                         return false;
@@ -137,6 +147,11 @@ public class Checker {
         }
     }
 
+    public static void moveTheStone(char[][] playGround, byte[] oldLocation, byte[] newLocation) {
+        playGround[newLocation[1]][newLocation[0]] = playGround[oldLocation[1]][oldLocation[0]];
+        playGround[oldLocation[1]][oldLocation[0]] = '0';
+    }
+
     //========================================================//
     //==========================Main==========================//
     //========================================================//
@@ -153,7 +168,7 @@ public class Checker {
 
         //initializing the game
         playGround = initPlayGround();
-
+        byte[] oldLocation = new byte[2];
         while (!gameEnded){
 
             printPlayGround(firstLine, frameLine, playGround);
@@ -161,7 +176,8 @@ public class Checker {
             //identify which user turn it is
             System.out.printf("Turn of player no.%s %n",playerTurn);
 
-            byte[] oldLocation = new byte[2];
+            isOldLocationValid = false;
+            isNewLocationValid = false;
             //...............OLD................
             //get the coordination of the piece to move
             while(!isOldLocationValid){
@@ -178,13 +194,18 @@ public class Checker {
                 isNewLocationValid = isNewLocationValid(playerTurn, playGround, oldLocation, newLocation);
                 if(!isNewLocationValid){
                     System.out.println("You entered an invalid location, try again.");
+                } else {
+                    moveTheStone(playGround, oldLocation, newLocation);
                 }
             }
 
 
-
-            playerTurn = 2;
-            gameEnded = true;
+            if(playerTurn == '1'){
+                playerTurn = '2';
+            } else {
+                playerTurn = '1';
+            }
+            gameEnded = false;
         }
 
 
