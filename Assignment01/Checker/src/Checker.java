@@ -49,13 +49,21 @@ public class Checker {
         System.out.println("|");
     }
 
-    public static byte[] getLocation() {
+    public static byte[] getLocation(boolean gameEnded) {
         //define the scanner
         Scanner s = new Scanner(System.in);
         System.out.print("  Enter X: ");
         byte x = s.nextByte();
+        if (x == -1) {
+            gameEnded = true;
+            System.exit( 1);
+        }
         System.out.print("  Enter y: ");
         byte y = s.nextByte();
+        if (y == -1) {
+            gameEnded = true;
+            System.exit( 1);
+        }
         return new byte[]{x,y};
     }
 
@@ -182,7 +190,7 @@ public class Checker {
             //get the coordination of the piece to move
             while(!isOldLocationValid){
                 System.out.println("Coordinate of piece to move");
-                oldLocation = getLocation();
+                oldLocation = getLocation(gameEnded);
                 isOldLocationValid = isOldLocationValid(playerTurn,playGround,oldLocation);
             }
 
@@ -190,7 +198,7 @@ public class Checker {
             //Get the destination location
             while(!isNewLocationValid){
                 System.out.println("Coordinate of new position");
-                byte[] newLocation = getLocation();
+                byte[] newLocation = getLocation(gameEnded);
                 isNewLocationValid = isNewLocationValid(playerTurn, playGround, oldLocation, newLocation);
                 if(!isNewLocationValid){
                     System.out.println("You entered an invalid location, try again.");
