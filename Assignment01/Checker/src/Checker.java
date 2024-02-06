@@ -165,7 +165,6 @@ public class Checker {
     //========================================================//
     public static void main(String[] str){
         //define the basic parameters
-//        boolean gameEnded =false;
         char playerTurn = '1';
         String firstLine = "   0 1 2 3 4 5 6 7   <- X axis";
         String frameLine = "  +----------------+";
