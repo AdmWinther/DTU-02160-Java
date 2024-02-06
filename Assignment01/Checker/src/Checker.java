@@ -165,7 +165,7 @@ public class Checker {
     //========================================================//
     public static void main(String[] str){
         //define the basic parameters
-        boolean gameEnded =false;
+//        boolean gameEnded =false;
         char playerTurn = '1';
         String firstLine = "   0 1 2 3 4 5 6 7   <- X axis";
         String frameLine = "  +----------------+";
@@ -177,7 +177,7 @@ public class Checker {
         //initializing the game
         playGround = initPlayGround();
         byte[] oldLocation = new byte[2];
-        while (!gameEnded){
+        while (true){
 
             printPlayGround(firstLine, frameLine, playGround);
 
