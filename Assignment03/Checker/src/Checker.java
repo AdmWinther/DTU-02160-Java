@@ -36,65 +36,21 @@ class Piece {
     }
 }
 
-class Cell{
-    private boolean filled = false;
-    private Piece piece;
-
-    public boolean isEmpty(){
-        return !this.filled;
-    }
-
-    public boolean isFilled(){
-        return this.filled;
-    }
-
-    public void FillCell(boolean color){
-        this.filled=true;
-        this.piece = new Piece(color);
-    }
-    public void setEmpty(){
-        this.filled=false;
-        this.piece = null;
-    }
-
-    public void getPieceFromOtherCell(Cell cell){
-        this.piece = cell.piece;
-        this.filled = true;
-        cell.setEmpty();
-    }
-
-    public boolean getPieceColorBool(){
-        return this.piece.getColor();
-    }
-
-    public void printCell(){
-        if(this.piece != null){
-            if(this.piece.getColor()){
-                System.out.print(" 2");
-            } else {
-                System.out.print(" 1");
-            }
-        } else {
-            System.out.print("  ");
-        }
-    }
-}
-
-class Grid{
-    private Cell[][] grid;
+class Grid2{
+    private Piece[][] grid;
 
     //constructor of the Field
-    public  Grid() {
-        grid= new Cell[8][8];
+    public  Grid2() {
+        grid= new Piece[8][8];
         for(int i = 0; i <8 ; i++){
             for(int j = 0; j <8 ; j++){
-                grid[i][j]= new Cell();
+                grid[i][j]= null;
             }
         }
         this.initialPiecePlacement();
     }
 
-    private Cell gridCell(int[] location){
+    private Piece gridCell(int[] location){
         return grid[location[0]][location[1]];
     }
 
@@ -102,7 +58,8 @@ class Grid{
         for(int i=0; i<8;i++){
             for(int j=0; j<3; j++){
                 if((i+j)%2==1){
-                    grid[i][j].FillCell(false);
+//                    grid[i][j].FillCell(false);
+                    grid[i][j]=new Piece(false);
                 }
 //                this.printGrid();
             }
@@ -111,7 +68,8 @@ class Grid{
         for(int i=0; i<8;i++){
             for(int j=5; j<8; j++){
                 if((i+j)%2==1){
-                    grid[i][j].FillCell(true);
+//                    grid[i][j].FillCell(true);
+                    grid[i][j]= new Piece(true);
                 }
 //                this.printGrid();
             }
@@ -137,7 +95,8 @@ class Grid{
     }
 
     private void moveStoneBetweenCells(int[] oldLocation, int[] newLocation){
-        this.gridCell(newLocation).getPieceFromOtherCell(this.gridCell(oldLocation));
+        grid[newLocation[0]][newLocation[1]] = this.gridCell(oldLocation);
+        grid[oldLocation[0]][oldLocation[1]] = null;
     }
 
     private static boolean isLocationInTheField(int[] location) {
@@ -147,11 +106,11 @@ class Grid{
         return location[1] <= 8 && location[1] >= 0;
     }
     private boolean isLocationEmpty(int[] location) {
-        return this.gridCell(location).isEmpty();
+        return this.gridCell(location) == null;
     }
 
     private boolean isPlayerMovingOwnStone(int[] oldLocation, boolean playerTurn) {
-        boolean pieceColor = gridCell(oldLocation).getPieceColorBool();
+        boolean pieceColor = gridCell(oldLocation).getColor();
         if(!pieceColor){
             //the color of the piece in the cell was 1.
             return !playerTurn;
@@ -166,10 +125,10 @@ class Grid{
     private static boolean isPlayerMovingInTheWrongDirection(boolean playerTurn, int[] oldLocation, int[] newLocation) {
         if(playerTurn){
             //Player 2 must move up, towards lower Js, therefore the new_Y < old_Y
-            return newLocation[1] - oldLocation[1] > 0;
+            return newLocation[1] - oldLocation[1] >= 0;
         } else {
             //Player 1 must move down, therefore the new_Y > old_Y-1
-            return newLocation[1] - oldLocation[1] < 0;
+            return newLocation[1] - oldLocation[1] <= 0;
         }
     }
 
@@ -243,7 +202,16 @@ class Grid{
         for (int j = 0; j < 8; j++) {
             System.out.printf("%s |", j);
             for (int i = 0; i < 8; i++) {
-                grid[i][j].printCell();
+//                grid[i][j].printCell();
+                if(grid[i][j] == null){
+                    System.out.print("  ");
+                } else {
+                    if (grid[i][j].getColor()) {
+                        System.out.print(" 2");
+                    } else {
+                        System.out.print(" 1");
+                    }
+                }
             }
             System.out.println(" |");
         }
@@ -289,7 +257,7 @@ public class Checker {
 
 
     public static void main(String[] args){
-        Grid grid = new Grid();
+        Grid2 grid = new Grid2();
         boolean playerTurn = false;
 
         while(true){
